@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CYBER ATTACK 69 ZONE - BOSS ENAFUL</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap');
+        body { background-color: #000; color: #0f0; font-family: 'Courier New', monospace; margin: 0; padding: 20px; text-align: center; }
+        #matrix { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .arabic-header { font-family: 'Amiri', serif; font-size: 3rem; color: #0ff; text-shadow: 0 0 20px #0ff; }
+        .hacker-text { font-family: 'Courier New', monospace; font-weight: bold; font-size: 1.5rem; color: #0f0; }
+        button { background: #1a1a1a; color: #0f0; border: 1px solid #0f0; padding: 15px 30px; cursor: pointer; border-radius: 5px; font-weight: bold; box-shadow: 0 0 10px #0f0; transition: 0.3s; }
+        button:hover { background: #0f0; color: #000; box-shadow: 0 0 20px #0f0; }
+        #main-system { border: 2px solid #00f; padding: 20px; background: rgba(0, 0, 20, 0.6); backdrop-filter: blur(5px); border-radius: 15px; }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <div id="password-overlay" class="overlay">
+        <h1 class="arabic-header">نظام بوس إينافول</h1>
+        <button onclick="startVoiceAuth()">VOICE ACCESS: BOSS ENAFUL</button>
+        <p id="status-text" style="margin-top:20px;"></p>
+    </div>
+
+    <div id="main-system" style="display: none;">
+        <header><h1 class="arabic-header">سيبير 69</h1><h2 class="hacker-text">SYSTEM STATUS: ACTIVE [BOSS ENAFUL]</h2></header>
+        <div id="controls"><button onclick="loadReports()">Generate All 100 Reports</button></div>
+        <div id="report-container"></div>
+    </div>
+
+    <audio id="bg-music" loop><source src="cyber_attack_69_zone.mp3" type="audio/mpeg"></audio>
+
+    <script src="script.js"></script>
+    <script>
+        // ভয়েস অথেন্টিকেশন
+        function speak(text) { const msg = new SpeechSynthesisUtterance(text); msg.lang = 'bn-BD'; window.speechSynthesis.speak(msg); }
+        function startVoiceAuth() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'en-US';
+            recognition.start();
+            speak("পাসওয়ার্ড বলুন");
+            recognition.onresult = (event) => {
+                const t = event.results[0][0].transcript.toLowerCase();
+                if (t.includes("boss enaful")) {
+                    document.getElementById('password-overlay').style.display = 'none';
+                    document.getElementById('main-system').style.display = 'block';
+                    document.getElementById('bg-music').play();
+                } else { speak("পাসওয়ার্ড আপনার ভুল"); document.getElementById('status-text').innerText = "ACCESS DENIED!"; }
+            };
+        }
+
+        // অ্যারাবিক ম্যাট্রিক্স
+        const canvas = document.getElementById('matrix'); const ctx = canvas.getContext('2d');
+        canvas.height = window.innerHeight; canvas.width = window.innerWidth;
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789العربيةالقرآنالبرمجةسيبير";
+        const fontSize = 16; const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0f0"; ctx.font = fontSize + "px monospace";
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 33);
+    </script>
+</body>
+</html>
