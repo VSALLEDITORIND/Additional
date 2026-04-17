@@ -12,7 +12,8 @@
         .hacker-text { font-family: 'Courier New', monospace; font-weight: bold; font-size: 1.5rem; color: #0f0; }
         button { background: #1a1a1a; color: #0f0; border: 1px solid #0f0; padding: 15px 30px; cursor: pointer; border-radius: 5px; font-weight: bold; box-shadow: 0 0 10px #0f0; transition: 0.3s; }
         button:hover { background: #0f0; color: #000; box-shadow: 0 0 20px #0f0; }
-        #main-system { border: 2px solid #00f; padding: 20px; background: rgba(0, 0, 20, 0.6); backdrop-filter: blur(5px); border-radius: 15px; }
+        #main-system { border: 2px solid #00f; padding: 20px; background: rgba(0, 0, 20, 0.6); backdrop-filter: blur(5px); border-radius: 15px; margin-top: 20px; }
+        .report-item { background: #111; padding: 10px; margin: 5px; border-left: 3px solid #0f0; text-align: left; }
     </style>
 </head>
 <body>
@@ -27,7 +28,7 @@
     <div id="main-system" style="display: none;">
         <header>
             <h1 class="arabic-header">سيبير 69</h1>
-            <h2 class="hacker-text">SYSTEM STATUS: ACTIVE [BOSS ENAFUL]</h2>
+            <h2 class="hacker-text" id="typewriter"></h2>
         </header>
         <div id="controls"><button onclick="loadReports()">Generate All 100 Reports</button></div>
         <div id="report-container"></div>
@@ -35,73 +36,60 @@
 
     <audio id="bg-music" loop><source src="cyber_attack_69_zone.mp3" type="audio/mpeg"></audio>
 
-    <script src="script.js"></script>
     <script>
-        // ভয়েস অথেন্টিকেশন লজিক
-        function speak(text) { 
-            const msg = new SpeechSynthesisUtterance(text); 
-            msg.lang = 'bn-BD'; 
-            window.speechSynthesis.speak(msg); 
-        }
-
+        // ভয়েস অথেন্টিকেশন
+        function speak(text) { const msg = new SpeechSynthesisUtterance(text); msg.lang = 'bn-BD'; window.speechSynthesis.speak(msg); }
+        
         function startVoiceAuth() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("আপনার ব্রাউজার ভয়েস রিকগনিশন সাপোর্ট করছে না।");
-                return;
-            }
-
             const recognition = new SpeechRecognition();
-            recognition.lang = 'en-US'; 
-            recognition.continuous = false; 
-            recognition.interimResults = false;
-            
+            recognition.lang = 'en-US';
             speak("পাসওয়ার্ড বলুন");
-            document.getElementById('status-text').innerText = "Listening...";
-
             recognition.onresult = (event) => {
                 const t = event.results[0][0].transcript.toLowerCase();
                 if (t.includes("boss") && t.includes("enaful")) {
                     document.getElementById('password-overlay').style.display = 'none';
                     document.getElementById('main-system').style.display = 'block';
+                    document.documentElement.requestFullscreen(); // ফুল স্ক্রিন
                     document.getElementById('bg-music').play();
-                } else {
-                    speak("পাসওয়ার্ড আপনার ভুল");
-                    document.getElementById('status-text').innerText = "ACCESS DENIED: " + t;
-                }
+                    typeEffect("SYSTEM STATUS: ACTIVE [BOSS ENAFUL]");
+                } else { speak("পাসওয়ার্ড আপনার ভুল"); }
             };
-            
-            recognition.onerror = (event) => {
-                speak("শুনতে পারছি না, আবার চেষ্টা করুন");
-                document.getElementById('status-text').innerText = "Error: " + event.error;
-            };
-            
             recognition.start();
         }
 
-        // অ্যারাবিক ম্যাট্রিক্স ইফেক্ট
-        const canvas = document.getElementById('matrix'); 
-        const ctx = canvas.getContext('2d');
-        canvas.height = window.innerHeight; 
-        canvas.width = window.innerWidth;
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789العربيةالقرآنالبرمجةسيبير";
-        const fontSize = 16; 
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+        // টাইপিং ইফেক্ট
+        function typeEffect(text) {
+            let i = 0;
+            const el = document.getElementById('typewriter');
+            function type() { if(i < text.length) { el.innerHTML += text.charAt(i); i++; setTimeout(type, 50); } }
+            type();
+        }
 
-        function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; 
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#0f0"; 
-            ctx.font = fontSize + "px monospace";
-            for (let i = 0; i < drops.length; i++) {
-                const text = letters[Math.floor(Math.random() * letters.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
+        // ১০০টি রিপোর্ট জেনারেটর (পুরানো ফিচার ব্যাক করা হলো)
+        function loadReports() {
+            const container = document.getElementById('report-container');
+            container.innerHTML = '';
+            for(let i=1; i<=100; i++) {
+                container.innerHTML += `<div class="report-item">Report #${i}: Cyber Security Breach Detected - Priority ${Math.floor(Math.random()*10)}</div>`;
             }
         }
-        setInterval(drawMatrix, 33);
+
+        // অ্যারাবিক ম্যাট্রিক্স
+        const canvas = document.getElementById('matrix'); const ctx = canvas.getContext('2d');
+        canvas.height = window.innerHeight; canvas.width = window.innerWidth;
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789العربيةالقرآنالبرمجةسيبير";
+        const fontSize = 16; const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+        setInterval(() => {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0f0"; ctx.font = fontSize + "px monospace";
+            drops.forEach((d, i) => {
+                ctx.fillText(letters[Math.floor(Math.random()*letters.length)], i*fontSize, d*fontSize);
+                if (d*fontSize > canvas.height) drops[i] = 0;
+                drops[i]++;
+            });
+        }, 33);
     </script>
 </body>
 </html>
