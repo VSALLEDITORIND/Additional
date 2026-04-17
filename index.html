@@ -17,6 +17,7 @@
 </head>
 <body>
     <canvas id="matrix"></canvas>
+
     <div id="password-overlay" class="overlay">
         <h1 class="arabic-header">نظام بوس إينافول</h1>
         <button onclick="startVoiceAuth()">VOICE ACCESS: BOSS ENAFUL</button>
@@ -24,7 +25,10 @@
     </div>
 
     <div id="main-system" style="display: none;">
-        <header><h1 class="arabic-header">سيبير 69</h1><h2 class="hacker-text">SYSTEM STATUS: ACTIVE [BOSS ENAFUL]</h2></header>
+        <header>
+            <h1 class="arabic-header">سيبير 69</h1>
+            <h2 class="hacker-text">SYSTEM STATUS: ACTIVE [BOSS ENAFUL]</h2>
+        </header>
         <div id="controls"><button onclick="loadReports()">Generate All 100 Reports</button></div>
         <div id="report-container"></div>
     </div>
@@ -33,32 +37,63 @@
 
     <script src="script.js"></script>
     <script>
-        // ভয়েস অথেন্টিকেশন
-        function speak(text) { const msg = new SpeechSynthesisUtterance(text); msg.lang = 'bn-BD'; window.speechSynthesis.speak(msg); }
+        // ভয়েস অথেন্টিকেশন লজিক
+        function speak(text) { 
+            const msg = new SpeechSynthesisUtterance(text); 
+            msg.lang = 'bn-BD'; 
+            window.speechSynthesis.speak(msg); 
+        }
+
         function startVoiceAuth() {
-            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'en-US';
-            recognition.start();
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("আপনার ব্রাউজার ভয়েস রিকগনিশন সাপোর্ট করছে না।");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'en-US'; 
+            recognition.continuous = false; 
+            recognition.interimResults = false;
+            
             speak("পাসওয়ার্ড বলুন");
+            document.getElementById('status-text').innerText = "Listening...";
+
             recognition.onresult = (event) => {
                 const t = event.results[0][0].transcript.toLowerCase();
-                if (t.includes("boss enaful")) {
+                if (t.includes("boss") && t.includes("enaful")) {
                     document.getElementById('password-overlay').style.display = 'none';
                     document.getElementById('main-system').style.display = 'block';
                     document.getElementById('bg-music').play();
-                } else { speak("পাসওয়ার্ড আপনার ভুল"); document.getElementById('status-text').innerText = "ACCESS DENIED!"; }
+                } else {
+                    speak("পাসওয়ার্ড আপনার ভুল");
+                    document.getElementById('status-text').innerText = "ACCESS DENIED: " + t;
+                }
             };
+            
+            recognition.onerror = (event) => {
+                speak("শুনতে পারছি না, আবার চেষ্টা করুন");
+                document.getElementById('status-text').innerText = "Error: " + event.error;
+            };
+            
+            recognition.start();
         }
 
-        // অ্যারাবিক ম্যাট্রিক্স
-        const canvas = document.getElementById('matrix'); const ctx = canvas.getContext('2d');
-        canvas.height = window.innerHeight; canvas.width = window.innerWidth;
+        // অ্যারাবিক ম্যাট্রিক্স ইফেক্ট
+        const canvas = document.getElementById('matrix'); 
+        const ctx = canvas.getContext('2d');
+        canvas.height = window.innerHeight; 
+        canvas.width = window.innerWidth;
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789العربيةالقرآنالبرمجةسيبير";
-        const fontSize = 16; const columns = canvas.width / fontSize;
+        const fontSize = 16; 
+        const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
+
         function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#0f0"; ctx.font = fontSize + "px monospace";
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0f0"; 
+            ctx.font = fontSize + "px monospace";
             for (let i = 0; i < drops.length; i++) {
                 const text = letters[Math.floor(Math.random() * letters.length)];
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
